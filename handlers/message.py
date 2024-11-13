@@ -1,9 +1,11 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
+from telegram import ParseMode
 from config import SOURCE_CHANNEL_ID, DESTINATION_CHANNEL_ID, MESSAGE_MAP
+from handlers.commands import is_forwarding
 
 def forward_message(update, context):
+    global is_forwarding
     message = update.message
-    if message.chat.id == SOURCE_CHANNEL_ID:
+    if message.chat.id == SOURCE_CHANNEL_ID and is_forwarding:
         forwarded_message = None
         if message.text:
             forwarded_message = context.bot.send_message(
@@ -66,26 +68,3 @@ def forward_message(update, context):
         
         if forwarded_message:
             MESSAGE_MAP[message.message_id] = forwarded_message.message_id
-
-def edit_message(update, context):
-    edited_message = update.edited_message
-    if edited_message.chat.id == SOURCE_CHANNEL_ID:
-        dest_message_id = MESSAGE_MAP.get(edited_message.message_id)
-
-        if dest_message_id:
-            if edited_message.text:
-                context.bot.edit_message_text(
-                    chat_id=DESTINATION_CHANNEL_ID,
-                    message_id=dest_message_id,
-                    text=edited_message.text,
-                    parse_mode=ParseMode.MARKDOWN_V2,
-                    reply_markup=edited_message.reply_markup
-                )
-            elif edited_message.caption:
-                context.bot.edit_message_caption(
-                    chat_id=DESTINATION_CHANNEL_ID,
-                    message_id=dest_message_id,
-                    caption=edited_message.caption,
-                    parse_mode=ParseMode.MARKDOWN_V2,
-                    reply_markup=edited_message.reply_markup
-                )
