@@ -30,7 +30,13 @@ A Telegram bot built with Python that forwards all posts, including text, sticke
    - Create an application on [my.telegram.org](https://my.telegram.org) to get your API ID and API hash.
    - Replace `YOUR_API_ID` and `YOUR_API_HASH` in `config.py`.
 
-6. **Run the bot:**
+6. **Create a `Procfile`:**
+   Create a `Procfile` in the root directory of your project with the following content:
+    ```
+    web: gunicorn bot:app
+    ```
+
+7. **Run the bot:**
     ```bash
     python bot.py
     ```
